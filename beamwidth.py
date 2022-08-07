@@ -55,7 +55,7 @@ def gauss(x,a,u,sig,offset):
 
 para,covariance=curve_fit(gauss,x,y,p0=[1,mean,sigma,1])
 sig=para[2]
-fwhm=2*sig*np.sqrt(2*np.log(2))
+fwhm=abs(2*sig*np.sqrt(2*np.log(2)))
 print("HPBW: ",fwhm*(0.25/60)*np.cos((sun_dec*np.pi)/180))
 
 np.save("gausspower.npy",gauss(x,*para))
