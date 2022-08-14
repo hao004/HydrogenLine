@@ -50,7 +50,7 @@ while True:
     t=Time(fulltime,scale='utc',location=loc)
     LST=t.sidereal_time('mean')
     hour=LST.value
-    degree=np.round(hour*15,2)
+    degree=np.round(hour*15,3)
 
     if len(os.listdir(path))==36:
         print("Observations at "+str(dec)+" completed.")
