@@ -5,7 +5,6 @@ import numpy as np
 from rtlsdr import RtlSdr
 import matplotlib.pyplot as plt
 
-
 sdr=RtlSdr()
 sdr.sample_rate=2.4e6
 sdr.center_freq=1420.40575e6     
