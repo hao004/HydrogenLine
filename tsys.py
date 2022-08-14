@@ -26,7 +26,7 @@ while True:
     time_arr.append(diff)
     if diff==duration:
         break
-    elif diff=300:
+    elif diff==300:
         print("Hot")
     time.sleep(1)
 
