@@ -58,7 +58,7 @@ while True:
 
     for i in range(len(full)):
         if abs(degree-full[i])<=0.375:
-            full.remove(full[i])
+            np.delete(full,i)
             print("Observing at\nRA(h,m):"+str(LST)+" DEC(degree):"+str(dec))
             zero_arr=np.load("zero_arr.npy")
             t1=time.perf_counter()
@@ -77,3 +77,5 @@ while True:
         raw_samples=sdr.read_samples(num_points)*np.hamming(num_points)
         spectra=(abs(np.fft.fft(raw_samples)))**2
         zero_arr=zero_arr+spectra
+
+        
