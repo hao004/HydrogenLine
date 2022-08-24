@@ -1,7 +1,5 @@
 import os
 import time
-import scipy as sp
-import scipy.signal
 import numpy as np
 from rtlsdr import RtlSdr
 import astropy.units as u
@@ -67,10 +65,9 @@ while True:
                 spectra=(abs(np.fft.fft(raw_samples)))**2
                 zero_arr=zero_arr+spectra
             avgsource=np.fft.fftshift((zero_arr/num_spectra))
-            medsource=(sp.signal.medfilt(avgsource,15))
             t2=time.perf_counter()
             print("Observation completed. Time taken in seconds: "+str(t2-t1))
-            np.save(os.path.join('H1Spectra/ONDEC'+dec,str(int(degree))),medsource)
+            np.save(os.path.join('H1Spectra/ONDEC'+dec,str(int(degree))),avgsource)
     
     zero_arr=np.load("zero_arr.npy")
     for _ in range(num_spectra):
