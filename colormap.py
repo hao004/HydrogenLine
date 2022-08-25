@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 
 pixels=[]
 
-for a in range(27):
+for a in range(13):
     source=[]
-    for i in range(71):
-        data=np.load("H1Spectra/CALDEC"+str(-65+5*a)+"/temp"+str(i)+".npy")
+    for i in range(37):
+        data=np.load('H1Spectra/CALDEC'+str(-60+10*a)+'/'+str(i*10))
         area=trapz(data,dx=1)
         source.append(area)
     pixels.append(source)

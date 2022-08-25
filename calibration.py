@@ -16,11 +16,11 @@ velocity=c*((rest_freq/freq)-1)
 x=np.linspace(0,2048,num=2048)
 loc=EarthLocation(lon=101.6,lat=3.01,height=88)
 
-for a in range(27):
-    for i in range(71):
+for a in range(13):
+    for i in range(37):
         corrected_vel=velocity*u.km/u.s
         rv=c*((rest_freq/rest_freq)-1)*u.km/u.s
-        file="H1Spectra/ONDEC"+str(-65+5*a)+"/"+str(i)+".npy"
+        file="H1Spectra/ONDEC"+str(-60+10*a)+"/"+str(i*10)+".npy"
         epoch=os.path.getmtime(file)
         fulltime=datetime.datetime.utcfromtimestamp(epoch)
         t=Time(fulltime,scale='utc',location=loc)
@@ -41,8 +41,8 @@ for a in range(27):
         new_rv = my_observation.transform_to(LSR()).radial_velocity
         corrected_vel=corrected_vel+new_rv
         
-        raw=np.load("H1Spectra/ONDEC"+str(-65+5*a)+"/"+str(i)+".npy")
-        cold=np.load("H1Spectra/OFFDEC"+str(-65+5*a)+"/"+str(i)+".npy")
+        raw=np.load("H1Spectra/ONDEC"+str(-60+10*a)+"/"+str(i*10)+".npy")
+        cold=np.load("H1Spectra/OFFDEC"+str(-60+10*a)+"/"+str(i*10)+".npy")
         model=np.poly1d(np.polyfit(x,cold,30))
         curvefit=model(x)
 
@@ -59,8 +59,8 @@ for a in range(27):
         plt.ylim(-0.03,1.1)
         plt.plot(corrected_vel,source)
         plt.savefig("H1Spectra/DEC0/"+str(LSThms)+".png")
-        np.save(os.path.join('H1Spectra/CALDEC'+str(-65+5*a),'velocity'+str(i)),corrected_vel.value)
-        np.save(os.path.join('H1Spectra/CALDEC'+str(-65+5*a),'temp'+str(i)),source)
+        np.save(os.path.join('H1Spectra/CALDEC'+str(-60+10*a),'velocity'+str(i*10)),corrected_vel.value)
+        np.save(os.path.join('H1Spectra/CALDEC'+str(-60+10*a),'power'+str(i*10)),source)
         
 
 
