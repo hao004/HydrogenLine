@@ -14,7 +14,7 @@ sdr.center_freq=1420.40575e6
 sdr.freq_correction=1  
 sdr.gain=40.2
 num_points=2048
-duration=9400
+duration=10800
 loc=EarthLocation(lon=101.6,lat=3.01,height=88)
 average_arr=[]
 time_arr=[]
@@ -26,7 +26,7 @@ while True:
     sun_hour=get_sun(t).ra.value/15
     sun_dec=get_sun(t).dec.value
     diff=np.round(abs(point_hour-sun_hour),2)
-    if diff==1.3:
+    if diff<=1.5:
         break
 
 print('Start')

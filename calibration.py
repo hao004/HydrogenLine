@@ -1,19 +1,19 @@
 import os
 import datetime
 import numpy as np
-import astropy.units as u
 import matplotlib.pyplot as plt
+import astropy.units as u
 from astropy.time import Time
 from astropy.coordinates import ICRS, LSR
 from astropy.coordinates import SkyCoord, EarthLocation
 
 c = 299792.458
-size = 2048
 rest_freq = 1420.40575e6
+fft_size = 2048
 freq = np.load("fft_freq.npy")
 velocity = c * ((rest_freq / freq) - 1)
 velocity_res = c * ((rest_freq / (freq + freq[0] - freq[1] )) - 1)
-x = np.linspace(0, size, num = size)
+x = np.linspace(0, fft_size, num = fft_size)
 loc = EarthLocation(lon = 101.6, lat = 3.01, height = 88)
 bound = int(60 / velocity_res)
 bound2 = int(40 / velocity_res)
@@ -57,10 +57,10 @@ for a in range(13):
         modified = model(x) * a
         source = raw - modified
 
-        yback = source[size - bound: size - bound2]
+        yback = source[fft_size - bound: fft_size - bound2]
         yfront = source[bound2:bound]
         y1 = np.concatenate((yback, yfront))
-        xback = velocity[size - bound: size - bound2]
+        xback = velocity[fft_size - bound: fft_size - bound2]
         xfront = velocity[bound2:bound]
         x1 = np.concatenate((xback, xfront))
 
@@ -74,11 +74,11 @@ for a in range(13):
 
         source = source - line
         n = 10 // 2
-        yback = source[size - bound: size - bound2]
+        yback = source[fft_size - bound: fft_size - bound2]
         yfront = source[bound2:bound]
         y = np.concatenate((yback, yfront))
         std = np.std(y)
-        for i in range(size - bound*2):
+        for i in range(fft_size - bound*2):
             
             p = i + bound
             med = np.median(source[p - n: p + n + 1])
@@ -89,12 +89,8 @@ for a in range(13):
                 source[p] = med
 
         np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'velocity' + str(i * 10)), \
-        corrected_vel[bound:size-bound].value)
+        corrected_vel[bound:fft_size-bound].value)
         np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'power' + str(i * 10)), \
-        source[bound:size-bound])
+        source[bound:fft_size-bound])
         
 
-
-
-
-        
