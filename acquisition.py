@@ -64,7 +64,7 @@ while True:
             
             for _ in range(num_spectra):
                 raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
-                spectra = (abs(np.fft.fft(raw_samples))) ** 2
+                spectra = (abs(np.fft.fft(raw_samples)))**2
                 zero_arr = zero_arr + spectra
             
             avgsource = np.fft.fftshift((zero_arr / num_spectra))
@@ -75,5 +75,5 @@ while True:
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
         raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
-        spectra = (abs(np.fft.fft(raw_samples))) ** 2
+        spectra = (abs(np.fft.fft(raw_samples)))**2
         zero_arr = zero_arr + spectra

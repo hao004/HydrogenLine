@@ -67,7 +67,7 @@ for a in range(13):
         mean_y = sum(y1) / len(y1)
         mean_x = sum(x1) / len(x1)
         product = (x1 - mean_x) * (y1 - mean_y)
-        square = (x1 - mean_x) ** 2
+        square = (x1 - mean_x)**2
         b1 = sum(product) / sum(square)
         b0 = mean_y - b1 * mean_x
         line = b1 * (velocity) + b0
