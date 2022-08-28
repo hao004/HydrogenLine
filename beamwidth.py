@@ -14,7 +14,7 @@ sdr.center_freq = 1420.40575e6
 sdr.freq_correction = 1  
 sdr.gain = 40.2
 num_points = 2048
-duration = 10800
+duration = 10080
 loc = EarthLocation(lon = 101.6, lat = 3.01, height = 88)
 average_arr = []
 time_arr = []
@@ -26,13 +26,14 @@ while True:
     sun_hour = get_sun(t).ra.value/15
     sun_dec = get_sun(t).dec.value
     diff = np.round(abs(point_hour - sun_hour), 2)
-    if diff <= 1.5:
+    if diff <= 1.4:
         break
 
 print(Time.now())
 print('Start')
 t1 = time.perf_counter()
 while True:
+    
     raw_samples = sdr.read_samples(num_points)
     power = sum((abs(raw_samples))**2) / num_points
     average_arr.append(power)
@@ -42,6 +43,7 @@ while True:
     if diff == duration:
         break
     time.sleep(1)
+
 print(Time.now())
 print("Finished")
 x = np.array(time_arr)

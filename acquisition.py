@@ -70,7 +70,7 @@ while True:
             avgsource = np.fft.fftshift((zero_arr / num_spectra))
             t2 = time.perf_counter()
             print("Observation completed. Time taken in seconds: " + str(t2 - t1))
-            np.save(os.path.join('H1Spectra/ONDEC' + dec, str(int(degree))), avgsource)
+            np.save(os.path.join('H1Spectra/ONDEC' + dec + str(int(degree))), avgsource)
     
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):

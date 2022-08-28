@@ -88,9 +88,9 @@ for a in range(13):
             if p == 401:
                 source[p] = med
 
-        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'velocity' + str(i * 10)), \
+        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a) + '/velocity' + str(i * 10)), \
         corrected_vel[bound:fft_size-bound].value)
-        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'power' + str(i * 10)), \
+        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a) + '/power' + str(i * 10)), \
         source[bound:fft_size-bound])
         
 
