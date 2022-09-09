@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 from astropy.time import Time
 from astropy.coordinates import SkyCoord, EarthLocation
 
-##TODO add warmup
-
 sdr = RtlSdr()
 sdr.sample_rate = 2.4e6
 sdr.center_freq = 1420.40575e6
@@ -44,6 +42,13 @@ for ra in raw_arr:
         fullraw_arr.remove(ra)
 
 full = np.array(fullraw_arr)
+
+for _ in range(15): 
+    zero_arr = np.load("zero_arr.npy")
+    for _ in range(num_spectra):
+        raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
+        spectra = (abs(np.fft.fft(raw_samples)))**2
+        zero_arr = zero_arr + spectra
 
 while True:
     fulltime = Time.now()

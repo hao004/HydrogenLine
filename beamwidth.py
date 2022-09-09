@@ -19,15 +19,15 @@ loc = EarthLocation(lon = 101.6, lat = 3.01, height = 88)
 average_arr = []
 time_arr = []
 
-# while True:
-#     t=Time(Time.now(), scale = 'utc', location = loc)
-#     LST = t.sidereal_time('mean')
-#     point_hour = np.round(LST.value,2)
-#     sun_hour = get_sun(t).ra.value/15
-#     sun_dec = get_sun(t).dec.value
-#     diff = np.round(abs(point_hour - sun_hour), 2)
-#     if diff <= 1.4:
-#         break
+while True:
+    t=Time(Time.now(), scale = 'utc', location = loc)
+    LST = t.sidereal_time('mean')
+    point_hour = np.round(LST.value,2)
+    sun_hour = get_sun(t).ra.value/15
+    sun_dec = get_sun(t).dec.value
+    diff = np.round(abs(point_hour - sun_hour), 2)
+    if diff <= 1.4:
+        break
 
 print(Time.now())
 print('Start')
@@ -51,22 +51,22 @@ y = np.array(average_arr)
 np.save("bwtime.npy", x)
 np.save("bwpower.npy", y)
 
-# mean = sum(x * y) / sum(y)
-# sigma = np.sqrt(sum(y * (x-mean)**2) / sum(y))
+mean = sum(x * y) / sum(y)
+sigma = np.sqrt(sum(y * (x-mean)**2) / sum(y))
 
-# def gauss(x, a, u, sig, offset):
-#     return a * np.exp(- (x - u)**2 / (2 * sig**2)) + offset
+def gauss(x, a, u, sig, offset):
+    return a * np.exp(- (x - u)**2 / (2 * sig**2)) + offset
 
-# para, covariance = curve_fit(gauss, x, y, p0=[1, mean, sigma, 1])
-# sig = para[2]
-# fwhm = abs(2 * sig * np.sqrt(2 * np.log(2)))
-# print("HPBW: ", fwhm * (0.25 / 60) * np.cos((sun_dec * np.pi) / 180))
+para, covariance = curve_fit(gauss, x, y, p0=[1, mean, sigma, 1])
+sig = para[2]
+fwhm = abs(2 * sig * np.sqrt(2 * np.log(2)))
+print("HPBW: ", fwhm * (0.25 / 60) * np.cos((sun_dec * np.pi) / 180))
 
-# np.save("gausspower.npy", gauss(x, *para))
+np.save("gausspower.npy", gauss(x, *para))
 
-# plt.plot(x, gauss(x, *para))
-# plt.plot(x, y)
-# plt.show()
+plt.plot(x, gauss(x, *para))
+plt.plot(x, y)
+plt.show()
 
 
 
