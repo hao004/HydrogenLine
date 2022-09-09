@@ -8,7 +8,7 @@ for a in range(13):
     
     source=[]
     
-    for i in range(37):
+    for i in range(36):
         
         data = np.load('H1Spectra/CALDEC' + str(-60 + 10*a) + '/power' + str(i * 10) + '.npy')
         area = trapz(data, dx = 1)

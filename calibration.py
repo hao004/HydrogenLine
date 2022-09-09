@@ -20,7 +20,7 @@ bound2 = int(40 / velocity_res)
 
 for a in range(13):
     
-    for i in range(37):
+    for i in range(36):
         
         corrected_vel = velocity * u.km/u.s
         rv = c * ((rest_freq / rest_freq) - 1) * u.km/u.s

@@ -33,7 +33,6 @@ print(Time.now())
 print('Start')
 t1 = time.perf_counter()
 while True:
-    
     raw_samples = sdr.read_samples(num_points)
     power = sum((abs(raw_samples))**2) / num_points
     average_arr.append(power)
@@ -64,8 +63,8 @@ print("HPBW: ", fwhm * (0.25 / 60) * np.cos((sun_dec * np.pi) / 180))
 
 np.save("gausspower.npy", gauss(x, *para))
 
-plt.plot(x, gauss(x, *para))
 plt.plot(x, y)
+plt.plot(x, gauss(x, *para))
 plt.show()
 
 

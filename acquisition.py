@@ -1,4 +1,5 @@
 import os
+from socket import IPV6_RTHDR_TYPE_0
 import time
 import numpy as np
 from rtlsdr import RtlSdr
@@ -28,21 +29,25 @@ dec = input("Enter dec:")
 path = "H1Spectra/ONDEC"+dec
 rawfiles = os.listdir(path)
 
+#Create array of all RA
+for i in range(37):
+    ra = 10 * i
+    fullraw_arr.append(ra)
+
+#Create array of completed RA
 for i in range (len(rawfiles)):
     filename = os.path.splitext(rawfiles[i])[0]
     raw_arr.append(filename)
 raw_arr = list(map(int, raw_arr))
 
-for i in range(36):
-    ra = 10 * i
-    fullraw_arr.append(ra)
-    
+#Create array of incompleted RA
 for ra in raw_arr:
     if ra in fullraw_arr:
         fullraw_arr.remove(ra)
 
 full = np.array(fullraw_arr)
 
+#Rtlsdr warm up for 30 minutes
 for _ in range(15): 
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
@@ -50,6 +55,7 @@ for _ in range(15):
         spectra = (abs(np.fft.fft(raw_samples)))**2
         zero_arr = zero_arr + spectra
 
+#Observation begin
 while True:
     fulltime = Time.now()
     t = Time(fulltime, scale = 'utc', location = loc)
@@ -57,14 +63,18 @@ while True:
     hour = LST.value
     degree = np.round(hour * 15,3)
 
-    if len(os.listdir(path)) == 37:
+    if len(os.listdir(path)) == 36:
         print("Observations at " + str(dec) + " completed.")
         break
 
     for i in range(len(full)):
-        
         if abs(degree - full[i]) <= 0.375:
-            full = np.delete(full,[i])
+            if (full[i] == 0) or (full[i] == 360):
+                index = np.where((full == 0) | (full == 360))
+                full = np.delete(full, index)
+            else:
+                full = np.delete(full,[i])
+            
             print("Observing at\nRA(h,m):" + str(LST) + " DEC(degree):" + str(dec))
             zero_arr = np.load("zero_arr.npy")
             t1 = time.perf_counter()
@@ -77,7 +87,11 @@ while True:
             avgsource = np.fft.fftshift((zero_arr / num_spectra))
             t2 = time.perf_counter()
             print("Observation completed. Time taken in seconds: " + str(t2 - t1))
-            np.save(os.path.join('H1Spectra/ONDEC' + dec + str(int(degree))), avgsource)
+            
+            if (full[i] == 0) or (full[i] == 360):
+                np.save(os.path.join('H1Spectra/ONDEC' + dec + str(0), avgsource))
+            else:
+                np.save(os.path.join('H1Spectra/ONDEC' + dec + str(full[i])), avgsource)
     
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
