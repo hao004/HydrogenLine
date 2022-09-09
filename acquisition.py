@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from astropy.time import Time
 from astropy.coordinates import SkyCoord, EarthLocation
 
+##TODO add warmup
+
 sdr = RtlSdr()
 sdr.sample_rate = 2.4e6
 sdr.center_freq = 1420.40575e6
