@@ -25,6 +25,13 @@ regions = ['S6',"S7","S8","S9"]
 degrees = [233,32,87,268]
 full = np.array(degrees)
 
+for _ in range(15): 
+    zero_arr = np.load("zero_arr.npy")
+    for _ in range(num_spectra):
+        raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
+        spectra = (abs(np.fft.fft(raw_samples)))**2
+        zero_arr = zero_arr + spectra
+
 while True:
     fulltime = Time.now()
     t = Time(fulltime, scale = 'utc', location = loc)

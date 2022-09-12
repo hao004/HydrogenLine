@@ -1,5 +1,4 @@
 import os
-from socket import IPV6_RTHDR_TYPE_0
 import time
 import numpy as np
 from rtlsdr import RtlSdr
@@ -47,8 +46,8 @@ for ra in raw_arr:
 
 full = np.array(fullraw_arr)
 
-#Rtlsdr warm up for 30 minutes
-for _ in range(15): 
+#Rtlsdr warm up for 20 minutes
+for _ in range(10): 
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
         raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
@@ -89,10 +88,10 @@ while True:
             print("Observation completed. Time taken in seconds: " + str(t2 - t1))
             
             if (full[i] == 0) or (full[i] == 360):
-                np.save(os.path.join('H1Spectra/ONDEC' + dec + str(0), avgsource))
+                np.save(os.path.join('H1Spectra/ONDEC' + dec, str(0)), avgsource)
             else:
-                np.save(os.path.join('H1Spectra/ONDEC' + dec + str(full[i])), avgsource)
-    
+                np.save(os.path.join('H1Spectra/ONDEC' + dec, str(full[i])), avgsource)
+            break 
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
         raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
