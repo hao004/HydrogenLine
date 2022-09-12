@@ -96,7 +96,7 @@ while True:
                 np.save(os.path.join('H1Spectra/ONDEC' + dec, str(0)), avgsource)
             else:
                 np.save(os.path.join('H1Spectra/ONDEC' + dec, str(ra)), avgsource)
-        break 
+            break 
     zero_arr = np.load("zero_arr.npy")
     for _ in range(num_spectra):
         raw_samples = sdr.read_samples(num_points) * np.hamming(num_points)
