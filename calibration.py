@@ -74,8 +74,17 @@ for a in range(13):
 
         source = source - line
         n = 10 // 2
+        
         yback = source[fft_size - bound: fft_size - bound2]
+        for i in range(5):
+            index=[]
+            index.append(np.where(yback == np.amax(yback)))
+            yback = np.delete(yback, index)
         yfront = source[bound2:bound]
+        for i in range(5):
+            index=[]
+            index.append(np.where(yfront == np.amax(yfront)))
+            yfront = np.delete(yfront, index)
         y = np.concatenate((yback, yfront))
         std = np.std(y)
         for i in range(fft_size - bound*2):

@@ -78,7 +78,7 @@ while True:
                 full = np.delete(full, index)
             else:
                 full = np.delete(full,[i])
-            
+            print(Time.now())
             print("Observing at\nRA(h,m):" + str(LST) + " DEC(degree):" + str(dec))
             zero_arr = np.load("zero_arr.npy")
             t1 = time.perf_counter()
