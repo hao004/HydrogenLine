@@ -1,6 +1,8 @@
 import os
 import datetime
 import numpy as np
+import scipy as sp
+import scipy.signal
 import matplotlib.pyplot as plt
 import astropy.units as u
 from astropy.time import Time
@@ -12,11 +14,11 @@ rest_freq = 1420.40575e6
 fft_size = 2048
 freq = np.load("fft_freq.npy")
 velocity = c * ((rest_freq / freq) - 1)
-velocity_res = c * ((rest_freq / (freq + freq[0] - freq[1] )) - 1)
+velocity_res = c * ((rest_freq / (rest_freq + freq[0] - freq[1])) - 1)
 x = np.linspace(0, fft_size, num = fft_size)
 loc = EarthLocation(lon = 101.6, lat = 3.01, height = 88)
-bound = int(60 / velocity_res)
-bound2 = int(40 / velocity_res)
+bound = int(93 // velocity_res)
+bound2 = int(73 // velocity_res)
 
 for a in range(13):
     
@@ -24,7 +26,7 @@ for a in range(13):
         
         corrected_vel = velocity * u.km/u.s
         rv = c * ((rest_freq / rest_freq) - 1) * u.km/u.s
-        file = "H1Spectra/ONDEC" + str(-60 + 10*a) + "/" + str(i * 10) + ".npy"
+        file = "H1Spectra2/ONDEC" + str(60 - 10*a) + "/" + str(i * 10) + ".npy"
         epoch = os.path.getmtime(file)
         fulltime = datetime.datetime.utcfromtimestamp(epoch)
         t = Time(fulltime, scale='utc', location=loc)
@@ -45,15 +47,21 @@ for a in range(13):
         new_rv = my_observation.transform_to(LSR()).radial_velocity
         corrected_vel = corrected_vel + new_rv
         
-        raw = np.load("H1Spectra/ONDEC" + str(-60 + 10*a) + "/" + str(i * 10) + ".npy")
+        raw = np.load("H1Spectra2/ONDEC" + str(60 - 10*a) + "/" + str(i * 10) + ".npy")
+        med_raw = sp.signal.medfilt(raw,5)
         cold = np.load("COLD.npy")
-        model = np.poly1d(np.polyfit(x, cold, 30))
+        model = np.poly1d(np.polyfit(x, cold, 40))
         curvefit = model(x)
 
-        product = sum(curvefit[:bound] * raw[:bound])
-        square = sum(curvefit[:bound] ** 2)
+        index = np.where(raw == np.amax(raw))
+        if index[0][0]<295:
+            product=sum(curvefit[:fft_size-bound2]*med_raw[:fft_size-bound2])
+            square=sum(curvefit[:fft_size-bound2]**2)
+        else:
+            product=sum(curvefit[bound2:]*med_raw[bound2:])
+            square=sum(curvefit[bound2:]**2)
+        
         a = product / square
-
         modified = model(x) * a
         source = raw - modified
 
@@ -72,34 +80,22 @@ for a in range(13):
         b0 = mean_y - b1 * mean_x
         line = b1 * (velocity) + b0
 
-        source = source - line
-        n = 10 // 2
-        
-        yback = source[fft_size - bound: fft_size - bound2]
-        for i in range(5):
-            index=[]
-            index.append(np.where(yback == np.amax(yback)))
-            yback = np.delete(yback, index)
-        yfront = source[bound2:bound]
-        for i in range(5):
-            index=[]
-            index.append(np.where(yfront == np.amax(yfront)))
-            yfront = np.delete(yfront, index)
-        y = np.concatenate((yback, yfront))
-        std = np.std(y)
-        for i in range(fft_size - bound*2):
-            
-            p = i + bound
-            med = np.median(source[p - n: p + n + 1])
-            if abs(source[p] - med) / std > 12:
-                source[p] = med
-                print(p)
-            if p == 401:
-                source[p] = med
+        corrected = source - line
+        n = 10//2
+    
+        yback=corrected[fft_size - bound:fft_size - bound2]
+        yfront=corrected[bound2:bound]
+    
+        std = 0.01
+        for i in range(fft_size - bound2*2):
+            p = i + bound2
+            med = np.median(corrected[p - n:p + n + 1])
+            if abs(corrected[p] - med) / std > 3:
+                corrected[p] = med
 
-        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'velocity' + str(i * 10)), \
-        corrected_vel[bound:fft_size-bound].value)
-        np.save(os.path.join('H1Spectra/CALDEC' + str(-60 + 10*a), 'power' + str(i * 10)), \
-        source[bound:fft_size-bound])
+        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*a), 'velocity' + str(i * 10)), \
+        corrected_vel[bound2:fft_size-bound2].value)
+        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*a), 'corrected' + str(i * 10)), \
+        source[bound2:fft_size-bound2])
         
 
