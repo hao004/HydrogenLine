@@ -23,19 +23,20 @@ bound2 = int(73 // velocity_res)
 for a in range(13):
     count_a = a
     for i in range(36):
-        count_i =i
+        count_i = i
         corrected_vel = velocity * u.km/u.s
         rv = c * ((rest_freq / rest_freq) - 1) * u.km/u.s
         file = "H1Spectra2/ONDEC" + str(60 - 10*count_a) + "/" + str(count_i * 10) + ".npy"
         epoch = os.path.getmtime(file)
         fulltime = datetime.datetime.utcfromtimestamp(epoch)
         t = Time(fulltime, scale='utc', location=loc)
-        LST = t.sidereal_time('mean')
-        t.format = 'mjd'
-        LSThms = LST
+        # LST = t.sidereal_time('mean')
+        # t.format = 'mjd'
+        # LSThms = LST
 
-        ra = (LST.deg) * u.deg
-        dec = (3) * u.deg
+        # ra = (LST.deg) * u.deg
+        ra = count_i * 10 * u.deg
+        dec = (60 - 10*count_a) * u.deg
         sc = SkyCoord(ra, dec)
         vcorr = sc.radial_velocity_correction(kind='barycentric', obstime=t)  
         rv = rv + vcorr
@@ -94,8 +95,8 @@ for a in range(13):
                 corrected[p] = med
 
         np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*count_a), 'velocity' + str(count_i * 10)), 
-        corrected_vel.value)
+        corrected_vel[bound2:fft_size-bound2].value)
         np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*count_a), 'corrected' + str(count_i * 10)),
-        corrected)
+        corrected[bound2:fft_size-bound2])
         
 
