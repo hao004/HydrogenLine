@@ -21,12 +21,12 @@ bound = int(93 // velocity_res)
 bound2 = int(73 // velocity_res)
 
 for a in range(13):
-    
+    count_a = a
     for i in range(36):
-        
+        count_i =i
         corrected_vel = velocity * u.km/u.s
         rv = c * ((rest_freq / rest_freq) - 1) * u.km/u.s
-        file = "H1Spectra2/ONDEC" + str(60 - 10*a) + "/" + str(i * 10) + ".npy"
+        file = "H1Spectra2/ONDEC" + str(60 - 10*count_a) + "/" + str(count_i * 10) + ".npy"
         epoch = os.path.getmtime(file)
         fulltime = datetime.datetime.utcfromtimestamp(epoch)
         t = Time(fulltime, scale='utc', location=loc)
@@ -47,7 +47,7 @@ for a in range(13):
         new_rv = my_observation.transform_to(LSR()).radial_velocity
         corrected_vel = corrected_vel + new_rv
         
-        raw = np.load("H1Spectra2/ONDEC" + str(60 - 10*a) + "/" + str(i * 10) + ".npy")
+        raw = np.load("H1Spectra2/ONDEC" + str(60 - 10*count_a) + "/" + str(count_i * 10) + ".npy")
         med_raw = sp.signal.medfilt(raw,5)
         cold = np.load("COLD.npy")
         model = np.poly1d(np.polyfit(x, cold, 40))
@@ -55,14 +55,14 @@ for a in range(13):
 
         index = np.where(raw == np.amax(raw))
         if index[0][0]<295:
-            product=sum(curvefit[:fft_size-bound2]*med_raw[:fft_size-bound2])
-            square=sum(curvefit[:fft_size-bound2]**2)
+            product=sum(curvefit[fft_size-bound2:]*med_raw[fft_size-bound2:])
+            square=sum(curvefit[fft_size-bound2:]**2)
         else:
-            product=sum(curvefit[bound2:]*med_raw[bound2:])
-            square=sum(curvefit[bound2:]**2)
+            product=sum(curvefit[:bound2]*med_raw[:bound2])
+            square=sum(curvefit[:bound2]**2)
         
-        a = product / square
-        modified = model(x) * a
+        z = product / square
+        modified = model(x) * z
         source = raw - modified
 
         yback = source[fft_size - bound: fft_size - bound2]
@@ -87,15 +87,15 @@ for a in range(13):
         yfront=corrected[bound2:bound]
     
         std = 0.01
-        for i in range(fft_size - bound2*2):
-            p = i + bound2
+        for c in range(fft_size - bound2*2):
+            p = c + bound2
             med = np.median(corrected[p - n:p + n + 1])
             if abs(corrected[p] - med) / std > 3:
                 corrected[p] = med
 
-        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*a), 'velocity' + str(i * 10)), \
-        corrected_vel[bound2:fft_size-bound2].value)
-        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*a), 'corrected' + str(i * 10)), \
-        source[bound2:fft_size-bound2])
+        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*count_a), 'velocity' + str(count_i * 10)), 
+        corrected_vel.value)
+        np.save(os.path.join('H1Spectra2/ONDEC' + str(60 - 10*count_a), 'corrected' + str(count_i * 10)),
+        corrected)
         
 

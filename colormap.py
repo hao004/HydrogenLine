@@ -22,7 +22,8 @@ for a in range(13):
     for i in range(36):
         
         data = np.load('H1Spectra2/ONDEC' + str(60 - 10*a) + '/' + 'corrected' + str(i * 10) + '.npy')*47.5
-        area = trapz(data, np.flipud(velocity[x_bound:size-x_bound]))
+        velocity = np.load('H1Spectra2/ONDEC' + str(60 - 10*a) + '/' + 'velocity' + str(i * 10) + '.npy')
+        area = trapz(data, velocity)
         #source.append(area)
         #log_density = np.log10(1.82*10**18*abs(area))
         density=abs(1.82*10**18*area)
